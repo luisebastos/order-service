@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: luisepessoabastos/order:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: store-secrets
+                  key: database-url
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: store-secrets
+                  key: database-username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: store-secrets
+                  key: database-password
+            - name: STORE_PRODUCT_URL
+              value: "http://product:8080"
+
